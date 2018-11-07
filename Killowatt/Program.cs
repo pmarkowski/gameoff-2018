@@ -10,16 +10,17 @@ namespace Killowatt
 {
     class Program
     {
-        public const int Width = 80;
-        public const int Height = 30;
+        public const int DisplayWidth = 80;
+        public const int DisplayHeight = 30;
 
         private static Entity player;
         private static Level map;
+        private static Console startingConsole;
 
         static void Main(string[] args)
         {
             // Setup the engine and creat the main window.
-            SadConsole.Game.Create("IBM.font", Width, Height);
+            SadConsole.Game.Create("IBM.font", DisplayWidth, DisplayHeight);
 
             // Hook the start event so we can add consoles to the system.
             SadConsole.Game.OnInitialize = Init;
@@ -73,19 +74,22 @@ namespace Killowatt
 
         private static void Init()
         {
+            int mapWidth = DisplayWidth * 2, mapHeight = DisplayHeight * 2;
             // Generate a map
-            map = new Level(Width, Height);
-
-            Console startingConsole = new Console(
-                Width,
-                Height,
+            map = new Level(mapWidth, mapHeight);
+            CreatePlayer(map.Player);
+            EntityManager entityManager = new EntityManager();
+            entityManager.Entities.Add(player);
+            startingConsole = new Console(
+                mapWidth,
+                mapHeight,
                 Global.FontDefault,
-                new Rectangle(0, 0, Width, Height),
+                new Rectangle(0, 0, DisplayWidth, DisplayHeight),
                 map.GetCells());
 
             // Set the player
-            CreatePlayer(map.Player);
-            startingConsole.Children.Add(player);
+            startingConsole.Children.Add(entityManager);
+            startingConsole.CenterViewPortOnPoint(player.Position);
 
             // Set our new console as the thing to render and process
             SadConsole.Global.CurrentScreen = startingConsole;
@@ -103,6 +107,7 @@ namespace Killowatt
             if (map.SquareIsPassable(nextPoint.X, nextPoint.Y))
             {
                 player.Position = nextPoint;
+                startingConsole.CenterViewPortOnPoint(player.Position);
             }
         }
     }
