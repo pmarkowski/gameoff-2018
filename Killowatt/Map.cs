@@ -43,5 +43,10 @@ namespace Killowatt
             }
             return cells;
         }
+
+        internal bool SquareIsPassable(int x, int y)
+        {
+            return map[x, y];
+        }
     }
 }

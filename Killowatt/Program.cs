@@ -14,6 +14,7 @@ namespace Killowatt
         public const int Height = 30;
 
         private static Entity player;
+        private static Map map;
 
         static void Main(string[] args)
         {
@@ -50,26 +51,30 @@ namespace Killowatt
 
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up))
             {
-                player.Position += new Point(0, -1);
+                Point newPoint = player.Position + new Point(0, -1);
+                TryMovePlayer(player, newPoint);
             }
             else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Down))
             {
-                player.Position += new Point(0, 1);
+                Point newPoint = player.Position + new Point(0, 1);
+                TryMovePlayer(player, newPoint);
             }
             else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Left))
             {
-                player.Position += new Point(-1, 0);
+                Point newPoint = player.Position + new Point(-1, 0);
+                TryMovePlayer(player, newPoint);
             }
             else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Right))
             {
-                player.Position += new Point(1, 0);
+                Point newPoint = player.Position + new Point(1, 0);
+                TryMovePlayer(player, newPoint);
             }
         }
 
         private static void Init()
         {
             // Generate a map
-            Map map = new Map(Width, Height);
+            map = new Map(Width, Height);
 
             Console startingConsole = new Console(
                 Width,
@@ -82,8 +87,6 @@ namespace Killowatt
             CreatePlayer();
             startingConsole.Children.Add(player);
 
-            
-
             // Set our new console as the thing to render and process
             SadConsole.Global.CurrentScreen = startingConsole;
         }
@@ -92,6 +95,14 @@ namespace Killowatt
         {
             player = new Entity(1, 1);
             player.Animation.CurrentFrame[0].Glyph = '@';
+        }
+
+        private static void TryMovePlayer(Entity player, Point nextPoint)
+        {
+            if (map.SquareIsPassable(nextPoint.X, nextPoint.Y))
+            {
+                player.Position = nextPoint;
+            }
         }
     }
 }
