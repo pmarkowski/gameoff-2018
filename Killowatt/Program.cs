@@ -84,16 +84,17 @@ namespace Killowatt
                 map.GetCells());
 
             // Set the player
-            CreatePlayer();
+            CreatePlayer(map.Player);
             startingConsole.Children.Add(player);
 
             // Set our new console as the thing to render and process
             SadConsole.Global.CurrentScreen = startingConsole;
         }
 
-        private static void CreatePlayer()
+        private static void CreatePlayer(Player mapPlayer)
         {
             player = new Entity(1, 1);
+            player.Position = new Point(mapPlayer.X, mapPlayer.Y);
             player.Animation.CurrentFrame[0].Glyph = '@';
         }
 

@@ -12,6 +12,9 @@ namespace Killowatt
     {
         int width, height;
         ArrayMap<bool> map;
+
+        public Player Player { get; private set; }
+
         public Level(int width, int height)
         {
             this.width = width;
@@ -20,6 +23,14 @@ namespace Killowatt
             //GoRogue.MapGeneration.Generators.RectangleMapGenerator.Generate(map);
 
             GoRogue.MapGeneration.Generators.RandomRoomsGenerator.Generate(map, 10, 3, 20, 5);
+
+            // Place player
+            GoRogue.Coord playerPos = map.RandomPosition(true);
+            Player = new Player()
+            {
+                X = playerPos.X,
+                Y = playerPos.Y
+            };
         }
 
         internal Cell[] GetCells()
