@@ -14,7 +14,7 @@ namespace Killowatt
         public const int Height = 30;
 
         private static Entity player;
-        private static Map map;
+        private static Level map;
 
         static void Main(string[] args)
         {
@@ -74,7 +74,7 @@ namespace Killowatt
         private static void Init()
         {
             // Generate a map
-            map = new Map(Width, Height);
+            map = new Level(Width, Height);
 
             Console startingConsole = new Console(
                 Width,

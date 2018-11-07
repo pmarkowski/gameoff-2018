@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Killowatt
 {
-    public class Map
+    public class Level
     {
         int width, height;
         ArrayMap<bool> map;
-        public Map(int width, int height)
+        public Level(int width, int height)
         {
             this.width = width;
             this.height = height;
