@@ -43,6 +43,12 @@ namespace Killowatt
             // Called each logic update.
             // This gets called repeatedly in real time
             // We only need to do any logic if game state is altered in some way
+            if (!map.Player.Energy.HasEnergy())
+            {
+                Console gameOverConsole = new Console(DisplayWidth, DisplayHeight);
+                gameOverConsole.FillWithRandomGarbage();
+                SadConsole.Global.CurrentScreen.Children.Add(gameOverConsole);
+            }
 
             // As an example, we'll use the F5 key to make the game full screen
             if (SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.F5))
@@ -107,6 +113,7 @@ namespace Killowatt
             if (map.SquareIsPassable(nextPoint.X, nextPoint.Y))
             {
                 player.Position = nextPoint;
+                map.PlayerMoved(nextPoint.X, nextPoint.Y);
                 startingConsole.CenterViewPortOnPoint(player.Position);
             }
         }

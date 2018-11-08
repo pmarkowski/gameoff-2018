@@ -29,7 +29,8 @@ namespace Killowatt
             Player = new Player()
             {
                 X = playerPos.X,
-                Y = playerPos.Y
+                Y = playerPos.Y,
+                Energy = new Energy(20, 5)
             };
         }
 
@@ -58,6 +59,13 @@ namespace Killowatt
         internal bool SquareIsPassable(int x, int y)
         {
             return map[x, y];
+        }
+
+        internal void PlayerMoved(int x, int y)
+        {
+            Player.X = x;
+            Player.Y = y;
+            Player.Energy.ConsumeEnergy(1);
         }
     }
 }
