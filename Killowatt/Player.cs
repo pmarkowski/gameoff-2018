@@ -11,6 +11,6 @@ namespace Killowatt
         public int X { get; set; }
         public int Y { get; set; }
 
-        public Energy Energy { get; }
+        public Energy Energy { get; set; }
     }
 }

@@ -38,5 +38,22 @@ namespace Killowatt.Test
             energy.CurrentFuel = -10;
             Assert.Equal(0, energy.CurrentFuel);
         }
+
+        [Fact]
+        public void ConsumeEnergy_SmallerValueThanSoc_ConsumesSocFirst()
+        {
+            Energy energy = new Energy(20, 3);
+            energy.ConsumeEnergy(5);
+            Assert.Equal(15, energy.CurrentSoc);
+        }
+
+        [Fact]
+        public void ConsumeEnergy_GreaterValueThanSoc_ConsumesSocFirstThenFuel()
+        {
+            Energy energy = new Energy(20, 3);
+            energy.ConsumeEnergy(22);
+            Assert.Equal(0, energy.CurrentSoc);
+            Assert.Equal(1, energy.CurrentFuel);
+        }
     }
 }

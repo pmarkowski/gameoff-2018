@@ -44,5 +44,20 @@ namespace Killowatt
         {
             return (CurrentSoc != 0) || (CurrentFuel != 0);
         }
+
+        public bool HasEnoughEnergy(int energy)
+        {
+            return (CurrentSoc + CurrentFuel) > energy;
+        }
+
+        public void ConsumeEnergy(int energy)
+        {
+            int overflow = Math.Abs(CurrentSoc - energy);
+            CurrentSoc -= energy;
+            if (overflow > 0)
+            {
+                CurrentFuel -= overflow;
+            }
+        }
     }
 }
