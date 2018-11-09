@@ -80,6 +80,7 @@ namespace Killowatt
             if (Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.F))
             {
                 // Try to use whatever tile the player is on
+                map.PlayerInteract();
             }
 
             // Sync entities

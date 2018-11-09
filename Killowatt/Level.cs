@@ -89,5 +89,13 @@ namespace Killowatt
             Player.Y = y;
             Player.Energy.ConsumeEnergy(1);
         }
+
+        internal void PlayerInteract()
+        {
+            if (ChargeStations.Any(station => station.X == Player.X && station.Y == Player.Y))
+            {
+                Player.Energy.CurrentSoc = Player.Energy.MaxSoc;
+            }
+        }
     }
 }
