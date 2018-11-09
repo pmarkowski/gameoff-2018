@@ -76,6 +76,13 @@ namespace Killowatt
                 Point newPoint = player.Position + new Point(1, 0);
                 TryMovePlayer(player, newPoint);
             }
+
+            if (Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.F))
+            {
+                // Try to use whatever tile the player is on
+            }
+
+            // Sync entities
         }
 
         private static void Init()

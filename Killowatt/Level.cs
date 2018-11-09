@@ -12,6 +12,7 @@ namespace Killowatt
     {
         int width, height;
         ArrayMap<bool> map;
+        List<ChargeStation> chargeStations;
 
         public Player Player { get; private set; }
 
@@ -32,6 +33,15 @@ namespace Killowatt
                 Y = playerPos.Y,
                 Energy = new Energy(20, 5)
             };
+
+            // Generate charge stations
+            chargeStations = new List<ChargeStation>();
+            // How Many? as many as max rooms for now
+            for (int i = 0; i < 10; i++)
+            {
+                GoRogue.Coord chargePos = map.RandomPosition(true);
+
+            }
         }
 
         internal Cell[] GetCells()
