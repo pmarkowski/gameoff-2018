@@ -8,7 +8,7 @@ namespace Killowatt
 {
     public class ChargeStation
     {
-        int X { get; set; }
-        int Y { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
     }
 }

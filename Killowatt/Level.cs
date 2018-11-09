@@ -10,10 +10,14 @@ namespace Killowatt
 {
     public class Level
     {
+        private const int MaxRooms = 20;
+        private const int MinRoomSize = 3;
+        private const int MaxRoomSize = 40;
+
         int width, height;
         ArrayMap<bool> map;
-        List<ChargeStation> chargeStations;
 
+        public List<ChargeStation> ChargeStations { get; set; }
         public Player Player { get; private set; }
 
         public Level(int width, int height)
@@ -23,7 +27,7 @@ namespace Killowatt
             map = new ArrayMap<bool>(width, height);
             //GoRogue.MapGeneration.Generators.RectangleMapGenerator.Generate(map);
 
-            GoRogue.MapGeneration.Generators.RandomRoomsGenerator.Generate(map, 10, 3, 20, 5);
+            GoRogue.MapGeneration.Generators.RandomRoomsGenerator.Generate(map, MaxRooms, MinRoomSize, MaxRoomSize, 5);
 
             // Place player
             GoRogue.Coord playerPos = map.RandomPosition(true);
@@ -35,12 +39,20 @@ namespace Killowatt
             };
 
             // Generate charge stations
-            chargeStations = new List<ChargeStation>();
+            ChargeStations = new List<ChargeStation>();
             // How Many? as many as max rooms for now
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < MaxRooms; i++)
             {
-                GoRogue.Coord chargePos = map.RandomPosition(true);
-
+                GoRogue.Coord chargePos = map.RandomPosition((coord, value) =>
+                    value &&
+                    coord != playerPos &&
+                    !ChargeStations.Any(station =>
+                        coord == GoRogue.Coord.Get(station.X, station.Y)));
+                ChargeStations.Add(new ChargeStation()
+                {
+                    X = chargePos.X,
+                    Y = chargePos.Y
+                });
             }
         }
 

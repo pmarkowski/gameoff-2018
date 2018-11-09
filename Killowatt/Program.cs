@@ -90,9 +90,20 @@ namespace Killowatt
             int mapWidth = DisplayWidth * 2, mapHeight = DisplayHeight * 2;
             // Generate a map
             map = new Level(mapWidth, mapHeight);
+
             CreatePlayer(map.Player);
+
             EntityManager entityManager = new EntityManager();
             entityManager.Entities.Add(player);
+
+            foreach (ChargeStation chargeStation in map.ChargeStations)
+            {
+                Entity stationEntity = new Entity(1, 1);
+                stationEntity.Position = new Point(chargeStation.X, chargeStation.Y);
+                stationEntity.Animation.CurrentFrame[0].Glyph = '&';
+                entityManager.Entities.Add(stationEntity);
+            }
+
             startingConsole = new Console(
                 mapWidth,
                 mapHeight,
