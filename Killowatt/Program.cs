@@ -96,22 +96,8 @@ namespace Killowatt
 
             EntityManager entityManager = new EntityManager();
             entityManager.Entities.Add(player);
-
-            foreach (ChargeStation chargeStation in map.ChargeStations)
-            {
-                Entity stationEntity = new Entity(1, 1);
-                stationEntity.Position = new Point(chargeStation.X, chargeStation.Y);
-                stationEntity.Animation.CurrentFrame[0].Glyph = '&';
-                entityManager.Entities.Add(stationEntity);
-            }
-
-            foreach (Enemy enemy in map.Enemies)
-            {
-                Entity stationEntity = new Entity(1, 1);
-                stationEntity.Position = new Point(enemy.X, enemy.Y);
-                stationEntity.Animation.CurrentFrame[0].Glyph = 'D';
-                entityManager.Entities.Add(stationEntity);
-            }
+            AddChargeStationEntities(entityManager);
+            AddEnemyEntities(entityManager);
 
             startingConsole = new Console(
                 mapWidth,
@@ -126,6 +112,28 @@ namespace Killowatt
 
             // Set our new console as the thing to render and process
             SadConsole.Global.CurrentScreen = startingConsole;
+        }
+
+        private static void AddEnemyEntities(EntityManager entityManager)
+        {
+            foreach (Enemy enemy in map.Enemies)
+            {
+                Entity stationEntity = new Entity(1, 1);
+                stationEntity.Position = new Point(enemy.X, enemy.Y);
+                stationEntity.Animation.CurrentFrame[0].Glyph = 'D';
+                entityManager.Entities.Add(stationEntity);
+            }
+        }
+
+        private static void AddChargeStationEntities(EntityManager entityManager)
+        {
+            foreach (ChargeStation chargeStation in map.ChargeStations)
+            {
+                Entity stationEntity = new Entity(1, 1);
+                stationEntity.Position = new Point(chargeStation.X, chargeStation.Y);
+                stationEntity.Animation.CurrentFrame[0].Glyph = '&';
+                entityManager.Entities.Add(stationEntity);
+            }
         }
 
         private static void CreatePlayer(Player mapPlayer)
