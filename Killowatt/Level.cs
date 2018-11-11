@@ -119,6 +119,23 @@ namespace Killowatt
             return map[x, y] && !Enemies.Any(enemy => enemy.X == x && enemy.Y == y);
         }
 
+        internal bool SquareHasEnemy(int x, int y)
+        {
+            return Enemies.Any(enemy => enemy.X == x && enemy.Y == y);
+        }
+
+        internal void Attack(Actor attacker, Actor defender)
+        {
+            // Roll to hit
+            int attackRoll = GoRogue.DiceNotation.Dice.Roll("1d20");
+
+            if (attackRoll > 5) // TODO: make this a value based on the defender's AC
+            {
+                int damageRoll = GoRogue.DiceNotation.Dice.Roll("1d6");
+                defender.Energy.ConsumeEnergy(damageRoll); // Damage is dealt to energy
+            }
+        }
+
         internal void PlayerMoved(int x, int y)
         {
             Player.X = x;
