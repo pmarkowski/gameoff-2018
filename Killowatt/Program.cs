@@ -105,6 +105,14 @@ namespace Killowatt
                 entityManager.Entities.Add(stationEntity);
             }
 
+            foreach (Enemy enemy in map.Enemies)
+            {
+                Entity stationEntity = new Entity(1, 1);
+                stationEntity.Position = new Point(enemy.X, enemy.Y);
+                stationEntity.Animation.CurrentFrame[0].Glyph = 'D';
+                entityManager.Entities.Add(stationEntity);
+            }
+
             startingConsole = new Console(
                 mapWidth,
                 mapHeight,

@@ -18,6 +18,7 @@ namespace Killowatt
         ArrayMap<bool> map;
 
         public List<ChargeStation> ChargeStations { get; set; }
+        public List<Enemy> Enemies { get; set; }
         public Player Player { get; private set; }
 
         public Level(int width, int height)
@@ -38,6 +39,13 @@ namespace Killowatt
             for (int i = 0; i < MaxRooms; i++)
             {
                 ChargeStations.Add(GenerateChargeStation());
+            }
+
+            // Generate enemies
+            Enemies = new List<Enemy>();
+            for (int i = 0; i < MaxRooms / 3; i++)
+            {
+                Enemies.Add(GenerateEnemy());
             }
         }
 
@@ -64,6 +72,23 @@ namespace Killowatt
             {
                 X = chargePos.X,
                 Y = chargePos.Y
+            };
+        }
+
+        private Enemy GenerateEnemy()
+        {
+            GoRogue.Coord chargePos = map.RandomPosition((coord, value) =>
+                    value &&
+                    coord != GoRogue.Coord.Get(Player.X, Player.Y) &&
+                    !ChargeStations.Any(station =>
+                        coord == GoRogue.Coord.Get(station.X, station.Y)));
+
+            return new Enemy()
+            {
+                X = chargePos.X,
+                Y = chargePos.Y,
+                // TODO: Define enemy fuel levels better
+                Energy = new Energy(0, 5)
             };
         }
 
