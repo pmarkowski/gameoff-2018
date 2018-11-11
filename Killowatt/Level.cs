@@ -67,8 +67,6 @@ namespace Killowatt
             };
         }
 
-        private 
-
         internal Cell[] GetCells()
         {
             Cell[] cells = new Cell[width * height];
