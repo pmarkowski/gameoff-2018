@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Killowatt
 {
-    public class Player : Actor
+    public class Actor
     {
+        public int X { get; set; }
+        public int Y { get; set; }
+        public Energy Energy { get; set; }
     }
 }
