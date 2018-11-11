@@ -30,31 +30,44 @@ namespace Killowatt
             GoRogue.MapGeneration.Generators.RandomRoomsGenerator.Generate(map, MaxRooms, MinRoomSize, MaxRoomSize, 5);
 
             // Place player
-            GoRogue.Coord playerPos = map.RandomPosition(true);
-            Player = new Player()
-            {
-                X = playerPos.X,
-                Y = playerPos.Y,
-                Energy = new Energy(20, 5)
-            };
+            Player = GeneratePlayer();
 
             // Generate charge stations
             ChargeStations = new List<ChargeStation>();
             // How Many? as many as max rooms for now
             for (int i = 0; i < MaxRooms; i++)
             {
-                GoRogue.Coord chargePos = map.RandomPosition((coord, value) =>
-                    value &&
-                    coord != playerPos &&
-                    !ChargeStations.Any(station =>
-                        coord == GoRogue.Coord.Get(station.X, station.Y)));
-                ChargeStations.Add(new ChargeStation()
-                {
-                    X = chargePos.X,
-                    Y = chargePos.Y
-                });
+                ChargeStations.Add(GenerateChargeStation());
             }
         }
+
+        private Player GeneratePlayer()
+        {
+            GoRogue.Coord playerPos = map.RandomPosition(true);
+            return new Player()
+            {
+                X = playerPos.X,
+                Y = playerPos.Y,
+                Energy = new Energy(20, 5)
+            };
+        }
+
+        private ChargeStation GenerateChargeStation()
+        {
+            GoRogue.Coord chargePos = map.RandomPosition((coord, value) =>
+                    value &&
+                    coord != GoRogue.Coord.Get(Player.X, Player.Y) &&
+                    !ChargeStations.Any(station =>
+                        coord == GoRogue.Coord.Get(station.X, station.Y)));
+
+            return new ChargeStation()
+            {
+                X = chargePos.X,
+                Y = chargePos.Y
+            };
+        }
+
+        private 
 
         internal Cell[] GetCells()
         {
