@@ -128,11 +128,13 @@ namespace Killowatt
         {
             // Roll to hit
             int attackRoll = GoRogue.DiceNotation.Dice.Roll("1d20");
-
+            System.Diagnostics.Debug.WriteLine($"Rolled {attackRoll} to hit");
+                
             if (attackRoll > 5) // TODO: make this a value based on the defender's AC
             {
                 int damageRoll = GoRogue.DiceNotation.Dice.Roll("1d6");
                 defender.Energy.ConsumeEnergy(damageRoll); // Damage is dealt to energy
+                System.Diagnostics.Debug.WriteLine($"Hit for {damageRoll} damage!");
             }
         }
 

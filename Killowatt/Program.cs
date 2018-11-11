@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SadConsole.Entities;
 using GoRogue.MapViews;
+using System.Linq;
 
 namespace Killowatt
 {
@@ -145,7 +146,12 @@ namespace Killowatt
 
         private static void TryMovePlayer(Entity player, Point nextPoint)
         {
-            if (map.SquareIsPassable(nextPoint.X, nextPoint.Y))
+            if (map.SquareHasEnemy(nextPoint.X, nextPoint.Y))
+            {
+                Enemy enemyAtNextPosition = map.Enemies.Where(enemy => enemy.X == nextPoint.X && enemy.Y == nextPoint.Y).Single();
+                map.Attack(map.Player, enemyAtNextPosition);
+            }
+            else if (map.SquareIsPassable(nextPoint.X, nextPoint.Y))
             {
                 player.Position = nextPoint;
                 map.PlayerMoved(nextPoint.X, nextPoint.Y);
