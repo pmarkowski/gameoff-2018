@@ -116,7 +116,7 @@ namespace Killowatt
 
         internal bool SquareIsPassable(int x, int y)
         {
-            return map[x, y];
+            return map[x, y] && !Enemies.Any(enemy => enemy.X == x && enemy.Y == y);
         }
 
         internal void PlayerMoved(int x, int y)
