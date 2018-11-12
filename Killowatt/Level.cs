@@ -135,6 +135,10 @@ namespace Killowatt
                 int damageRoll = GoRogue.DiceNotation.Dice.Roll("1d6");
                 defender.Energy.ConsumeEnergy(damageRoll); // Damage is dealt to energy
                 System.Diagnostics.Debug.WriteLine($"Hit for {damageRoll} damage!");
+                if (!defender.Energy.HasEnergy())
+                {
+                    System.Diagnostics.Debug.WriteLine($"Defender is out of energy!");
+                }
             }
         }
 
