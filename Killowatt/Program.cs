@@ -91,7 +91,7 @@ namespace Killowatt
         {
             int mapWidth = DisplayWidth * 2, mapHeight = DisplayHeight * 2;
             // Generate a map
-            map = new Level(mapWidth, mapHeight);
+            map = new Level(mapWidth, mapHeight, new GameMessageLogger());
 
             CreatePlayer(map.Player);
 

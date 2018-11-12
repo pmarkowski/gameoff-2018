@@ -16,13 +16,15 @@ namespace Killowatt
 
         int width, height;
         ArrayMap<bool> map;
+        GameMessageLogger logger;
 
         public List<ChargeStation> ChargeStations { get; set; }
         public List<Enemy> Enemies { get; set; }
         public Player Player { get; private set; }
 
-        public Level(int width, int height)
+        public Level(int width, int height, GameMessageLogger logger)
         {
+            this.logger = logger;
             this.width = width;
             this.height = height;
             map = new ArrayMap<bool>(width, height);
@@ -128,16 +130,16 @@ namespace Killowatt
         {
             // Roll to hit
             int attackRoll = GoRogue.DiceNotation.Dice.Roll("1d20");
-            System.Diagnostics.Debug.WriteLine($"Rolled {attackRoll} to hit");
+            logger.LogMessage($"Rolled {attackRoll} to hit");
                 
             if (attackRoll > 5) // TODO: make this a value based on the defender's AC
             {
                 int damageRoll = GoRogue.DiceNotation.Dice.Roll("1d6");
                 defender.Energy.ConsumeEnergy(damageRoll); // Damage is dealt to energy
-                System.Diagnostics.Debug.WriteLine($"Hit for {damageRoll} damage!");
+                logger.LogMessage($"Hit for {damageRoll} damage!");
                 if (!defender.Energy.HasEnergy())
                 {
-                    System.Diagnostics.Debug.WriteLine($"Defender is out of energy!");
+                    logger.LogMessage($"Defender is out of energy!");
                 }
             }
         }
