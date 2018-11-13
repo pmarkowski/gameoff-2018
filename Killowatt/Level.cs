@@ -1,5 +1,6 @@
 ﻿using GoRogue.MapViews;
 using SadConsole;
+using SadConsole.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,13 +17,17 @@ namespace Killowatt
 
         int width, height;
         ArrayMap<bool> map;
+        GameMessageLogger logger;
+        EntityManager entityManager;
 
         public List<ChargeStation> ChargeStations { get; set; }
         public List<Enemy> Enemies { get; set; }
         public Player Player { get; private set; }
 
-        public Level(int width, int height)
+        public Level(int width, int height, GameMessageLogger logger, EntityManager entityManager)
         {
+            this.entityManager = entityManager;
+            this.logger = logger;
             this.width = width;
             this.height = height;
             map = new ArrayMap<bool>(width, height);
@@ -32,32 +37,33 @@ namespace Killowatt
 
             // Place player
             Player = GeneratePlayer();
+            entityManager.Entities.Add(Player.RenderEntity);
 
             // Generate charge stations
             ChargeStations = new List<ChargeStation>();
             // How Many? as many as max rooms for now
             for (int i = 0; i < MaxRooms; i++)
             {
-                ChargeStations.Add(GenerateChargeStation());
+                ChargeStation chargeStation = GenerateChargeStation();
+                ChargeStations.Add(chargeStation);
+                entityManager.Entities.Add(chargeStation.RenderEntity);
+
             }
 
             // Generate enemies
             Enemies = new List<Enemy>();
             for (int i = 0; i < MaxRooms / 3; i++)
             {
-                Enemies.Add(GenerateEnemy());
+                Enemy enemy = GenerateEnemy();
+                Enemies.Add(enemy);
+                entityManager.Entities.Add(enemy.RenderEntity);
             }
         }
 
         private Player GeneratePlayer()
         {
             GoRogue.Coord playerPos = map.RandomPosition(true);
-            return new Player()
-            {
-                X = playerPos.X,
-                Y = playerPos.Y,
-                Energy = new Energy(20, 5)
-            };
+            return new Player(playerPos.X, playerPos.Y, '@', new Energy(20, 5));
         }
 
         private ChargeStation GenerateChargeStation()
@@ -68,11 +74,7 @@ namespace Killowatt
                     !ChargeStations.Any(station =>
                         coord == GoRogue.Coord.Get(station.X, station.Y)));
 
-            return new ChargeStation()
-            {
-                X = chargePos.X,
-                Y = chargePos.Y
-            };
+            return new ChargeStation(chargePos.X, chargePos.Y, '&');
         }
 
         private Enemy GenerateEnemy()
@@ -83,13 +85,7 @@ namespace Killowatt
                     !ChargeStations.Any(station =>
                         coord == GoRogue.Coord.Get(station.X, station.Y)));
 
-            return new Enemy()
-            {
-                X = chargePos.X,
-                Y = chargePos.Y,
-                // TODO: Define enemy fuel levels better
-                Energy = new Energy(0, 5)
-            };
+            return new Enemy(chargePos.X, chargePos.Y, 'D', new Energy(0, 5)); // TODO: Define enemy fuel levels better
         }
 
         internal Cell[] GetCells()
@@ -114,9 +110,45 @@ namespace Killowatt
             return cells;
         }
 
+        internal void UpdateEntities()
+        {
+            var enemiesToRemove = Enemies.Where(enemy => !enemy.Energy.HasEnergy()).ToList();
+            foreach (Enemy enemy in enemiesToRemove)
+            {
+                if (!enemy.Energy.HasEnergy())
+                {
+                    entityManager.Entities.Remove(enemy.RenderEntity);
+                    Enemies.Remove(enemy);
+                }
+            }
+        }
+
         internal bool SquareIsPassable(int x, int y)
         {
             return map[x, y] && !Enemies.Any(enemy => enemy.X == x && enemy.Y == y);
+        }
+
+        internal bool SquareHasEnemy(int x, int y)
+        {
+            return Enemies.Any(enemy => enemy.X == x && enemy.Y == y);
+        }
+
+        internal void Attack(Actor attacker, Actor defender)
+        {
+            // Roll to hit
+            int attackRoll = GoRogue.DiceNotation.Dice.Roll("1d20");
+            logger.LogMessage($"Rolled {attackRoll} to hit");
+                
+            if (attackRoll > 5) // TODO: make this a value based on the defender's AC
+            {
+                int damageRoll = GoRogue.DiceNotation.Dice.Roll("1d6");
+                defender.Energy.ConsumeEnergy(damageRoll); // Damage is dealt to energy
+                logger.LogMessage($"Hit for {damageRoll} damage!");
+                if (!defender.Energy.HasEnergy())
+                {
+                    logger.LogMessage($"Defender is out of energy!");
+                }
+            }
         }
 
         internal void PlayerMoved(int x, int y)

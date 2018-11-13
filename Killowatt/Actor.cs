@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 
 namespace Killowatt
 {
-    public class ChargeStation : MapObject
+    public class Actor : MapObject
     {
-        public ChargeStation(int x, int y, char glyph)
+        public Energy Energy { get; set; }
+
+        public Actor(int x, int y, char glyph, Energy energy)
             : base(x, y, glyph)
         {
+            Energy = energy;
         }
     }
 }

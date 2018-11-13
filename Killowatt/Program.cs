@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SadConsole.Entities;
 using GoRogue.MapViews;
+using System.Linq;
 
 namespace Killowatt
 {
@@ -13,7 +14,6 @@ namespace Killowatt
         public const int DisplayWidth = 80;
         public const int DisplayHeight = 30;
 
-        private static Entity player;
         private static Level map;
         private static Console startingConsole;
 
@@ -58,23 +58,23 @@ namespace Killowatt
 
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up))
             {
-                Point newPoint = player.Position + new Point(0, -1);
-                TryMovePlayer(player, newPoint);
+                Point newPoint = map.Player.RenderEntity.Position + new Point(0, -1);
+                TryMovePlayer(map.Player.RenderEntity, newPoint);
             }
             else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Down))
             {
-                Point newPoint = player.Position + new Point(0, 1);
-                TryMovePlayer(player, newPoint);
+                Point newPoint = map.Player.RenderEntity.Position + new Point(0, 1);
+                TryMovePlayer(map.Player.RenderEntity, newPoint);
             }
             else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Left))
             {
-                Point newPoint = player.Position + new Point(-1, 0);
-                TryMovePlayer(player, newPoint);
+                Point newPoint = map.Player.RenderEntity.Position + new Point(-1, 0);
+                TryMovePlayer(map.Player.RenderEntity, newPoint);
             }
             else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Right))
             {
-                Point newPoint = player.Position + new Point(1, 0);
-                TryMovePlayer(player, newPoint);
+                Point newPoint = map.Player.RenderEntity.Position + new Point(1, 0);
+                TryMovePlayer(map.Player.RenderEntity, newPoint);
             }
 
             if (Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.F))
@@ -84,20 +84,16 @@ namespace Killowatt
             }
 
             // Sync entities
+            map.UpdateEntities();
+            startingConsole.CenterViewPortOnPoint(map.Player.RenderEntity.Position);
         }
 
         private static void Init()
         {
+            EntityManager entityManager = new EntityManager();
             int mapWidth = DisplayWidth * 2, mapHeight = DisplayHeight * 2;
             // Generate a map
-            map = new Level(mapWidth, mapHeight);
-
-            CreatePlayer(map.Player);
-
-            EntityManager entityManager = new EntityManager();
-            entityManager.Entities.Add(player);
-            AddChargeStationEntities(entityManager);
-            AddEnemyEntities(entityManager);
+            map = new Level(mapWidth, mapHeight, new GameMessageLogger(), entityManager);
 
             startingConsole = new Console(
                 mapWidth,
@@ -108,48 +104,23 @@ namespace Killowatt
 
             // Set the player
             startingConsole.Children.Add(entityManager);
-            startingConsole.CenterViewPortOnPoint(player.Position);
+            startingConsole.CenterViewPortOnPoint(map.Player.RenderEntity.Position);
 
             // Set our new console as the thing to render and process
             SadConsole.Global.CurrentScreen = startingConsole;
         }
 
-        private static void AddEnemyEntities(EntityManager entityManager)
-        {
-            foreach (Enemy enemy in map.Enemies)
-            {
-                Entity stationEntity = new Entity(1, 1);
-                stationEntity.Position = new Point(enemy.X, enemy.Y);
-                stationEntity.Animation.CurrentFrame[0].Glyph = 'D';
-                entityManager.Entities.Add(stationEntity);
-            }
-        }
-
-        private static void AddChargeStationEntities(EntityManager entityManager)
-        {
-            foreach (ChargeStation chargeStation in map.ChargeStations)
-            {
-                Entity stationEntity = new Entity(1, 1);
-                stationEntity.Position = new Point(chargeStation.X, chargeStation.Y);
-                stationEntity.Animation.CurrentFrame[0].Glyph = '&';
-                entityManager.Entities.Add(stationEntity);
-            }
-        }
-
-        private static void CreatePlayer(Player mapPlayer)
-        {
-            player = new Entity(1, 1);
-            player.Position = new Point(mapPlayer.X, mapPlayer.Y);
-            player.Animation.CurrentFrame[0].Glyph = '@';
-        }
-
         private static void TryMovePlayer(Entity player, Point nextPoint)
         {
-            if (map.SquareIsPassable(nextPoint.X, nextPoint.Y))
+            if (map.SquareHasEnemy(nextPoint.X, nextPoint.Y))
+            {
+                Enemy enemyAtNextPosition = map.Enemies.Where(enemy => enemy.X == nextPoint.X && enemy.Y == nextPoint.Y).Single();
+                map.Attack(map.Player, enemyAtNextPosition);
+            }
+            else if (map.SquareIsPassable(nextPoint.X, nextPoint.Y))
             {
                 player.Position = nextPoint;
                 map.PlayerMoved(nextPoint.X, nextPoint.Y);
-                startingConsole.CenterViewPortOnPoint(player.Position);
             }
         }
     }
