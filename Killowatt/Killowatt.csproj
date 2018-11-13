@@ -78,6 +78,7 @@
     <Compile Include="Energy.cs" />
     <Compile Include="GameMessageLogger.cs" />
     <Compile Include="Level.cs" />
+    <Compile Include="MapObject.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>

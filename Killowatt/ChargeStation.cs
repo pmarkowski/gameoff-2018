@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SadConsole.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace Killowatt
 {
-    public class ChargeStation
+    public class ChargeStation : MapObject
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public ChargeStation(int x, int y, char glyph)
+            : base(x, y, glyph)
+        {
+        }
     }
 }

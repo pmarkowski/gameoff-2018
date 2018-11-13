@@ -8,5 +8,9 @@ namespace Killowatt
 {
     public class Enemy : Actor
     {
+        public Enemy(int x, int y, char glyph, Energy energy)
+            : base(x, y, glyph, energy)
+        {
+        }
     }
 }
