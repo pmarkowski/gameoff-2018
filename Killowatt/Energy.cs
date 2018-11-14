@@ -52,11 +52,11 @@ namespace Killowatt
 
         public void ConsumeEnergy(int energy)
         {
-            int overflow = Math.Abs(CurrentSoc - energy);
+            int overflow = CurrentSoc - energy;
             CurrentSoc -= energy;
-            if (overflow > 0)
+            if (overflow < 0)
             {
-                CurrentFuel -= overflow;
+                CurrentFuel -= Math.Abs(overflow);
             }
         }
     }
