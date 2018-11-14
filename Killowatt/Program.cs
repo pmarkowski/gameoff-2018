@@ -15,7 +15,7 @@ namespace Killowatt
         public const int DisplayHeight = 30;
 
         private static Level map;
-        private static Console startingConsole;
+        private static Console levelConsole, energyConsole;
 
         static void Main(string[] args)
         {
@@ -85,7 +85,8 @@ namespace Killowatt
 
             // Sync entities
             map.UpdateEntities();
-            startingConsole.CenterViewPortOnPoint(map.Player.RenderEntity.Position);
+            levelConsole.CenterViewPortOnPoint(map.Player.RenderEntity.Position);
+            RenderPlayerEnergy();
         }
 
         private static void Init()
@@ -94,20 +95,32 @@ namespace Killowatt
             int mapWidth = DisplayWidth * 2, mapHeight = DisplayHeight * 2;
             // Generate a map
             map = new Level(mapWidth, mapHeight, new GameMessageLogger(), entityManager);
+            Console parentConsole = new Console(DisplayWidth, DisplayHeight);
 
-            startingConsole = new Console(
+            levelConsole = new Console(
                 mapWidth,
                 mapHeight,
                 Global.FontDefault,
-                new Rectangle(0, 0, DisplayWidth, DisplayHeight),
+                new Rectangle(0, 1, DisplayWidth, DisplayHeight - 1),
                 map.GetCells());
 
+            parentConsole.Children.Add(levelConsole);
+
+            energyConsole = new Console(
+                DisplayWidth,
+                1,
+                Global.FontDefault,
+                new Rectangle(0, 0, DisplayWidth, 1));
+            energyConsole.Position = new Point(0, DisplayHeight - 1);
+            parentConsole.Children.Add(energyConsole);
+            RenderPlayerEnergy();
+
             // Set the player
-            startingConsole.Children.Add(entityManager);
-            startingConsole.CenterViewPortOnPoint(map.Player.RenderEntity.Position);
+            levelConsole.Children.Add(entityManager);
+            levelConsole.CenterViewPortOnPoint(map.Player.RenderEntity.Position);
 
             // Set our new console as the thing to render and process
-            SadConsole.Global.CurrentScreen = startingConsole;
+            SadConsole.Global.CurrentScreen = parentConsole;
         }
 
         private static void TryMovePlayer(Entity player, Point nextPoint)
@@ -122,6 +135,12 @@ namespace Killowatt
                 player.Position = nextPoint;
                 map.PlayerMoved(nextPoint.X, nextPoint.Y);
             }
+        }
+
+        private static void RenderPlayerEnergy()
+        {
+            energyConsole.Clear();
+            energyConsole.Print(0, 0, $"Energy: {map.Player.Energy.CurrentSoc,3}/{map.Player.Energy.MaxSoc,-3} {"Fuel: ",7}{map.Player.Energy.CurrentFuel,3}/{map.Player.Energy.MaxFuel,-3}");
         }
     }
 }
