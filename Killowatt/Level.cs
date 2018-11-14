@@ -1,4 +1,5 @@
 ﻿using GoRogue.MapViews;
+using GoRogue.Pathing;
 using SadConsole;
 using SadConsole.Entities;
 using System;
@@ -17,6 +18,7 @@ namespace Killowatt
 
         int width, height;
         ArrayMap<bool> map;
+        AStar aStar;
         GameMessageLogger logger;
         EntityManager entityManager;
 
@@ -32,6 +34,7 @@ namespace Killowatt
             this.height = height;
             map = new ArrayMap<bool>(width, height);
             //GoRogue.MapGeneration.Generators.RectangleMapGenerator.Generate(map);
+            aStar = new GoRogue.Pathing.AStar(map, GoRogue.Distance.MANHATTAN);
 
             GoRogue.MapGeneration.Generators.RandomRoomsGenerator.Generate(map, MaxRooms, MinRoomSize, MaxRoomSize, 5);
 
@@ -108,6 +111,23 @@ namespace Killowatt
                 }
             }
             return cells;
+        }
+
+        internal void Step()
+        {
+            // Enemies that are adjacent to the player attempt to attack
+            // Otherwise they try to move towards the player
+            foreach (Enemy enemy in Enemies)
+            {
+                Path path = aStar.ShortestPath(enemy.X, enemy.Y, Player.X, Player.Y);
+                if (path.Length > 1)
+                {
+                    GoRogue.Coord nextPoint = path.GetStep(0);
+                    enemy.X = nextPoint.X;
+                    enemy.Y = nextPoint.Y;
+                    enemy.RenderEntity.Position = new Microsoft.Xna.Framework.Point(nextPoint.X, nextPoint.Y);
+                }
+            }
         }
 
         internal void UpdateEntities()

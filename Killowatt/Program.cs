@@ -56,37 +56,48 @@ namespace Killowatt
                 SadConsole.Settings.ToggleFullScreen();
             }
 
+            bool progressState = false;
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up))
             {
                 Point newPoint = map.Player.RenderEntity.Position + new Point(0, -1);
                 TryMovePlayer(map.Player.RenderEntity, newPoint);
+                progressState = true;
             }
             else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Down))
             {
                 Point newPoint = map.Player.RenderEntity.Position + new Point(0, 1);
                 TryMovePlayer(map.Player.RenderEntity, newPoint);
+                progressState = true;
             }
             else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Left))
             {
                 Point newPoint = map.Player.RenderEntity.Position + new Point(-1, 0);
                 TryMovePlayer(map.Player.RenderEntity, newPoint);
+                progressState = true;
             }
             else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Right))
             {
                 Point newPoint = map.Player.RenderEntity.Position + new Point(1, 0);
                 TryMovePlayer(map.Player.RenderEntity, newPoint);
+                progressState = true;
             }
 
             if (Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.F))
             {
                 // Try to use whatever tile the player is on
                 map.PlayerInteract();
+                progressState = true;
             }
 
             // Sync entities
             map.UpdateEntities();
             levelConsole.CenterViewPortOnPoint(map.Player.RenderEntity.Position);
             RenderPlayerEnergy();
+
+            if (progressState)
+            {
+                map.Step();
+            }
         }
 
         private static void Init()
