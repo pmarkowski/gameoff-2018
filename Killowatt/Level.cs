@@ -63,7 +63,7 @@ namespace Killowatt
         private Player GeneratePlayer()
         {
             GoRogue.Coord playerPos = map.RandomPosition(true);
-            return new Player(playerPos.X, playerPos.Y, '@', new Energy(20, 5));
+            return new Player(playerPos.X, playerPos.Y, '@', new Energy(100, 20));
         }
 
         private ChargeStation GenerateChargeStation()
