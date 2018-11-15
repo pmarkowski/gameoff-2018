@@ -22,7 +22,7 @@ namespace Killowatt
                 Microsoft.Xna.Framework.Color.DimGray,
                 null,
                 null);
-            messageConsole.Print(0, 1, $">{message}");
+            messageConsole.Print(0, 1, $"> {message}");
         }
     }
 }
