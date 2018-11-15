@@ -13,6 +13,8 @@ namespace Killowatt
     {
         public const int DisplayWidth = 80;
         public const int DisplayHeight = 30;
+        public const int BottomConsoleWidth = 16;
+        public const int BottomConsoleHeight = 2;
 
         private static Level map;
         private static Console levelConsole, energyConsole;
@@ -102,29 +104,37 @@ namespace Killowatt
 
         private static void Init()
         {
+            Console messageConsole = new Console(
+                DisplayWidth - BottomConsoleWidth,
+                BottomConsoleHeight);
+            messageConsole.Position = new Point(BottomConsoleWidth, DisplayHeight - BottomConsoleHeight);
+
+            GameMessageLogger logger = new GameMessageLogger(messageConsole);
             EntityManager entityManager = new EntityManager();
-            int mapWidth = DisplayWidth * 2, mapHeight = DisplayHeight * 2;
-            // Generate a map
-            map = new Level(mapWidth, mapHeight, new GameMessageLogger(), entityManager);
             Console parentConsole = new Console(DisplayWidth, DisplayHeight);
+
+            // Generate a map
+            int mapWidth = DisplayWidth * 2, mapHeight = DisplayHeight * 2;
+            map = new Level(mapWidth, mapHeight, logger, entityManager);
 
             levelConsole = new Console(
                 mapWidth,
                 mapHeight,
                 Global.FontDefault,
-                new Rectangle(0, 1, DisplayWidth, DisplayHeight - 1),
+                new Rectangle(0, 1, DisplayWidth, DisplayHeight - BottomConsoleHeight),
                 map.GetCells());
 
             parentConsole.Children.Add(levelConsole);
 
             energyConsole = new Console(
-                DisplayWidth,
-                1,
-                Global.FontDefault,
-                new Rectangle(0, 0, DisplayWidth, 1));
-            energyConsole.Position = new Point(0, DisplayHeight - 1);
+                BottomConsoleWidth,
+                BottomConsoleHeight);
+            energyConsole.Position = new Point(0, DisplayHeight - BottomConsoleHeight);
             parentConsole.Children.Add(energyConsole);
+
             RenderPlayerEnergy();
+
+            parentConsole.Children.Add(messageConsole);
 
             // Set the player
             levelConsole.Children.Add(entityManager);
@@ -132,6 +142,8 @@ namespace Killowatt
 
             // Set our new console as the thing to render and process
             SadConsole.Global.CurrentScreen = parentConsole;
+
+            logger.LogMessage("Tread lightly.");
         }
 
         private static void TryMovePlayer(Entity player, Point nextPoint)
@@ -151,7 +163,8 @@ namespace Killowatt
         private static void RenderPlayerEnergy()
         {
             energyConsole.Clear();
-            energyConsole.Print(0, 0, $"Energy: {map.Player.Energy.CurrentSoc,3}/{map.Player.Energy.MaxSoc,-3} {"Fuel: ",7}{map.Player.Energy.CurrentFuel,3}/{map.Player.Energy.MaxFuel,-3}");
+            energyConsole.Print(0, 0, $"Energy: {map.Player.Energy.CurrentSoc,3}/{map.Player.Energy.MaxSoc,-3}", Color.LightBlue);
+            energyConsole.Print(0, 1, $"{"Fuel:",7} {map.Player.Energy.CurrentFuel,3}/{map.Player.Energy.MaxFuel,-3}", Color.LightGoldenrodYellow);
         }
     }
 }

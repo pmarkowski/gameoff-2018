@@ -8,9 +8,21 @@ namespace Killowatt
 {
     public class GameMessageLogger
     {
+        SadConsole.Console messageConsole;
+
+        public GameMessageLogger(SadConsole.Console messageConsole)
+        {
+            this.messageConsole = messageConsole;
+        }
         public void LogMessage(string message)
         {
-            System.Diagnostics.Debug.WriteLine(message);
+            messageConsole.ShiftUp();
+            messageConsole.Fill(
+                new Microsoft.Xna.Framework.Rectangle(0, 0, messageConsole.Width, 1),
+                Microsoft.Xna.Framework.Color.DimGray,
+                null,
+                null);
+            messageConsole.Print(0, 1, $"> {message}");
         }
     }
 }
