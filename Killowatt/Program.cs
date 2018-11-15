@@ -104,11 +104,18 @@ namespace Killowatt
 
         private static void Init()
         {
+            Console messageConsole = new Console(
+                DisplayWidth - BottomConsoleWidth,
+                BottomConsoleHeight);
+            messageConsole.Position = new Point(BottomConsoleWidth, DisplayHeight - BottomConsoleHeight);
+
+            GameMessageLogger logger = new GameMessageLogger(messageConsole);
             EntityManager entityManager = new EntityManager();
-            int mapWidth = DisplayWidth * 2, mapHeight = DisplayHeight * 2;
-            // Generate a map
-            map = new Level(mapWidth, mapHeight, new GameMessageLogger(), entityManager);
             Console parentConsole = new Console(DisplayWidth, DisplayHeight);
+
+            // Generate a map
+            int mapWidth = DisplayWidth * 2, mapHeight = DisplayHeight * 2;
+            map = new Level(mapWidth, mapHeight, logger, entityManager);
 
             levelConsole = new Console(
                 mapWidth,
@@ -127,12 +134,16 @@ namespace Killowatt
 
             RenderPlayerEnergy();
 
+            parentConsole.Children.Add(messageConsole);
+
             // Set the player
             levelConsole.Children.Add(entityManager);
             levelConsole.CenterViewPortOnPoint(map.Player.RenderEntity.Position);
 
             // Set our new console as the thing to render and process
             SadConsole.Global.CurrentScreen = parentConsole;
+
+            logger.LogMessage("Tread lightly.");
         }
 
         private static void TryMovePlayer(Entity player, Point nextPoint)
