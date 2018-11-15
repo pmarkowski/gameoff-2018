@@ -13,6 +13,8 @@ namespace Killowatt
     {
         public const int DisplayWidth = 80;
         public const int DisplayHeight = 30;
+        public const int BottomConsoleWidth = 16;
+        public const int BottomConsoleHeight = 2;
 
         private static Level map;
         private static Console levelConsole, energyConsole;
@@ -112,18 +114,17 @@ namespace Killowatt
                 mapWidth,
                 mapHeight,
                 Global.FontDefault,
-                new Rectangle(0, 1, DisplayWidth, DisplayHeight - 1),
+                new Rectangle(0, 1, DisplayWidth, DisplayHeight - BottomConsoleHeight),
                 map.GetCells());
 
             parentConsole.Children.Add(levelConsole);
 
             energyConsole = new Console(
-                DisplayWidth,
-                1,
-                Global.FontDefault,
-                new Rectangle(0, 0, DisplayWidth, 1));
-            energyConsole.Position = new Point(0, DisplayHeight - 1);
+                BottomConsoleWidth,
+                BottomConsoleHeight);
+            energyConsole.Position = new Point(0, DisplayHeight - BottomConsoleHeight);
             parentConsole.Children.Add(energyConsole);
+
             RenderPlayerEnergy();
 
             // Set the player
@@ -151,7 +152,8 @@ namespace Killowatt
         private static void RenderPlayerEnergy()
         {
             energyConsole.Clear();
-            energyConsole.Print(0, 0, $"Energy: {map.Player.Energy.CurrentSoc,3}/{map.Player.Energy.MaxSoc,-3} {"Fuel: ",7}{map.Player.Energy.CurrentFuel,3}/{map.Player.Energy.MaxFuel,-3}");
+            energyConsole.Print(0, 0, $"Energy: {map.Player.Energy.CurrentSoc,3}/{map.Player.Energy.MaxSoc,-3}", Color.LightBlue);
+            energyConsole.Print(0, 1, $"{"Fuel:",7} {map.Player.Energy.CurrentFuel,3}/{map.Player.Energy.MaxFuel,-3}", Color.LightGoldenrodYellow);
         }
     }
 }
