@@ -183,6 +183,7 @@ namespace Killowatt
             if (ChargeStations.Any(station => station.X == Player.X && station.Y == Player.Y))
             {
                 Player.Energy.CurrentSoc = Player.Energy.MaxSoc;
+                logger.LogMessage("I feel completely recharged!");
             }
         }
     }
