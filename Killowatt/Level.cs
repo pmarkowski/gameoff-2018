@@ -157,17 +157,23 @@ namespace Killowatt
         {
             // Roll to hit
             int attackRoll = GoRogue.DiceNotation.Dice.Roll("1d20");
-            logger.LogMessage($"Rolled {attackRoll} to hit");
                 
             if (attackRoll > 5) // TODO: make this a value based on the defender's AC
             {
                 int damageRoll = GoRogue.DiceNotation.Dice.Roll("1d6");
                 defender.Energy.ConsumeEnergy(damageRoll); // Damage is dealt to energy
-                logger.LogMessage($"Hit for {damageRoll} damage!");
                 if (!defender.Energy.HasEnergy())
                 {
-                    logger.LogMessage($"Defender is out of energy!");
+                    logger.LogMessage($"Hit for {damageRoll} damage, defeating the enemy!");
                 }
+                else
+                {
+                    logger.LogMessage($"Hit for {damageRoll} damage!");
+                }
+            }
+            else
+            {
+                logger.LogMessage($"Your attack missed!");
             }
         }
 
